@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almacén de Tejido - Una Rana Enredada</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #4a7c59;
+      --primary-light: #689f78;
+      --primary-soft: #eaf3ed;
+      --accent-warm: #d49a6a;
+      --kraft: #e6c594;
+      --kraft-dark: #b8864e;
+      --bg-cream: #faf7f2;
+      --surface: #ffffff;
+      --text: #2f3e46;
+      --text-muted: #6c757d;
+      --border: #e8e2d9;
+      --status-ok: #2e7d32;
+      --status-low: #ed6c02;
+      --status-out: #d32f2f;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md: 0 6px 18px rgba(0,0,0,0.07);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Nunito', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--primary-soft);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.4rem;
+      border: 2px dashed var(--primary-light);
+    }
+
+    .brand-text h1 {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .brand-text p {
+      font-size: 0.78rem;
+      color: var(--kraft-dark);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 3px 10px rgba(74, 124, 89, 0.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      background: var(--surface);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1.2rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* KPI Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      margin-bottom: 1.8rem;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .metric-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .metric-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 8px 18px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px;
+    }
+
+    /* Filter Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      font-size: 0.95rem;
+      background: var(--surface);
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .filter-chip {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .filter-chip.active {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Grid of Cards */
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .item-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      height: 150px;
+      background: #f1ede6;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-img-placeholder {
+      font-size: 3rem;
+      color: #cdbfb0;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .badge-ok { background: var(--status-ok); }
+    .badge-low { background: var(--status-low); }
+    .badge-out { background: var(--status-out); }
+
+    .color-swatch-tag {
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+    }
+
+    .color-circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+
+    .card-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      padding: 8px;
+      background: var(--bg-cream);
+      border-radius: 8px;
+    }
+
+    .card-meta-item span {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .card-meta-item strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Stock Controller */
+    .stock-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      gap: 8px;
+    }
+
+    .counter-group {
+      display: flex;
+      align-items: center;
+      background: #f1ede6;
+      border-radius: 10px;
+      padding: 3px;
+    }
+
+    .btn-count {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: white;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .btn-count:active {
+      transform: scale(0.92);
+    }
+
+    .count-display {
+      min-width: 44px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .btn-icon-action {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .btn-icon-action:hover {
+      background: var(--bg-cream);
+      color: var(--primary);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 2px dashed var(--border);
+    }
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--kraft);
+      margin-bottom: 12px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border-radius: var(--radius);
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      padding: 24px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-header h3 {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.3rem;
+      color: var(--primary);
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      font-size: 0.95rem;
+      background: var(--bg-cream);
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      background: white;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Calculator View */
+    .calc-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      max-width: 650px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .calc-price-result {
+      background: var(--primary-soft);
+      border: 2px dashed var(--primary);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .calc-price-result .big-price {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 5px 0;
+    }
+
+    /* Shopping List View */
+    .shop-list-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 20px;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    .shop-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .shop-item-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #2f3e46;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .header-container {
+        padding: 0.8rem;
+      }
+      .brand-text h1 {
+        font-size: 1.15rem;
+      }
+      .main-container {
+        padding: 1rem 0.8rem;
+      }
+      .inventory-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .card-img-wrap {
+        height: 120px;
+      }
+      .card-body {
+        padding: 10px;
+      }
+      .card-title {
+        font-size: 0.9rem;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-frog"></i>
+        </div>
+        <div class="brand-text">
+          <h1>Una Rana Enredada</h1>
+          <p>Almacén & Control de Materiales</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" id="btnExport" title="Descargar copia de seguridad"><i class="fa-solid fa-download"></i> <span class="hide-mobile">Respaldo</span></button>
+        <button class="btn btn-primary" id="btnOpenModalAdd"><i class="fa-solid fa-plus"></i> Nuevo Material</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- KPI / Resumen rápido -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#e8f5e9; color:#2e7d32;"><i class="fa-solid fa-cubes-stacked"></i></div>
+        <div>
+          <div class="metric-val" id="metricTotalItems">0</div>
+          <div class="metric-label">Tipos de Materiales</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#fff3e0; color:#ed6c02;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div>
+          <div class="metric-val" id="metricLowStock">0</div>
+          <div class="metric-label">Por Agotarse (&le; Min)</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#ffebee; color:#d32f2f;"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div>
+          <div class="metric-val" id="metricOutStock">0</div>
+          <div class="metric-label">Agotados (0 stock)</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon" style="background:var(--primary-soft); color:var(--primary);"><i class="fa-solid fa-coins"></i></div>
+        <div>
+          <div class="metric-val" id="metricTotalValue">S/ 0.00</div>
+          <div class="metric-label">Valor en Inventario</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación por pestañas -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="tab-inventory"><i class="fa-solid fa-boxes-packing"></i> Inventario Visual</button>
+      <button class="tab-btn" data-tab="tab-shopping"><i class="fa-solid fa-clipboard-list"></i> Lista de Compras</button>
+      <button class="tab-btn" data-tab="tab-calculator"><i class="fa-solid fa-calculator"></i> Calculadora de Costos</button>
+    </div>
+
+    <!-- Pestaña 1: Inventario -->
+    <section id="tab-inventory" class="tab-content">
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" class="search-input" placeholder="Buscar por color, material o código...">
+        </div>
+        <div class="filter-group">
+          <button class="filter-chip active" data-filter="all">Todos</button>
+          <button class="filter-chip" data-filter="hilos">Hilos / Lanas</button>
+          <button class="filter-chip" data-filter="accesorios">Llaveros / Ojos</button>
+          <button class="filter-chip" data-filter="empaques">Packaging</button>
+          <button class="filter-chip" data-filter="alertas" style="color:var(--status-low);"><i class="fa-solid fa-bell"></i> Solo Alertas</button>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Inventario -->
+      <div class="inventory-grid" id="inventoryGrid"></div>
+    </section>
+
+    <!-- Pestaña 2: Lista de Compras Automática -->
+    <section id="tab-shopping" class="tab-content" style="display:none;">
+      <div class="shop-list-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+          <div>
+            <h2 style="font-family:'Quicksand'; color:var(--primary);">Materiales por Reponer</h2>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Generado automáticamente según tus niveles de alerta.</p>
+          </div>
+          <button class="btn btn-outline" id="btnCopyShoppingList"><i class="fa-regular fa-copy"></i> Copiar a WhatsApp</button>
+        </div>
+        <div id="shoppingListContainer"></div>
+      </div>
+    </section>
+
+    <!-- Pestaña 3: Calculadora de Costos -->
+    <section id="tab-calculator" class="tab-content" style="display:none;">
+      <div class="calc-card">
+        <h2 style="font-family:'Quicksand'; color:var(--primary); margin-bottom:6px;">Calculadora de Amigurumis</h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Calcula el costo justo y el precio de venta sugerido considerando materiales, empaque y horas.</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Gramos aproximados de hilo</label>
+            <input type="number" id="calcYarnGrams" class="form-control" value="30" step="5">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Base: Ovillo 100g a S/ 8.00</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gramos de napa/relleno</label>
+            <input type="number" id="calcStuffingGrams" class="form-control" value="25" step="5">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Base: Kilo a S/ 21.00</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Argolla llavero (S/)</label>
+            <input type="number" id="calcKeychainCost" class="form-control" value="1.50" step="0.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ojos y detalles extras (S/)</label>
+            <input type="number" id="calcEyesCost" class="form-control" value="0.60" step="0.1">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Empaque, bolsa y tarjeta (S/)</label>
+            <input type="number" id="calcPackagingCost" class="form-control" value="3.00" step="0.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Horas estándar de tejido</label>
+            <input type="number" id="calcHours" class="form-control" value="2.5" step="0.5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Valor estimado de tu hora de mano de obra (S/)</label>
+          <input type="number" id="calcHourlyRate" class="form-control" value="6.50" step="0.5">
+        </div>
+
+        <div class="calc-price-result">
+          <span style="font-size:0.85rem; font-weight:700; color:var(--kraft-dark); text-transform:uppercase;">Precio de Venta Sugerido</span>
+          <div class="big-price" id="calcSuggestedPrice">S/ 29.00</div>
+          <p id="calcCostBreakdown" style="font-size:0.85rem; color:var(--text-muted);">Costo materiales: S/ 8.03 | Mano de obra: S/ 16.25</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal para Agregar/Editar Material -->
+  <div class="modal-overlay" id="itemModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">Agregar Nuevo Material</h3>
+        <button class="btn-close" id="btnCloseModal">&times;</button>
+      </div>
+      <form id="materialForm">
+        <input type="hidden" id="formItemId">
+
+        <div class="form-group">
+          <label class="form-label">Nombre del Material *</label>
+          <input type="text" id="formName" class="form-control" placeholder="Ej. Algodón 4 hebras, Argolla dorada..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Categoría *</label>
+            <select id="formCategory" class="form-control">
+              <option value="hilos">Hilos y Lanas</option>
+              <option value="accesorios">Llaveros y Fornituras</option>
+              <option value="empaques">Packaging y Bolsas</option>
+              <option value="otros">Otros (Ojos, Relleno)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Color / Tono / Código</label>
+            <input type="text" id="formColorName" class="form-control" placeholder="Ej. Rojo Carmín #12">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Muestra de Color Visual</label>
+            <input type="color" id="formColorHex" class="form-control" value="#e63946" style="height:44px; padding:2px; cursor:pointer;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Precio Unitario (S/) *</label>
+            <input type="number" id="formCost" class="form-control" placeholder="8.00" step="0.10" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Stock Actual (Unidades / Ovillos) *</label>
+            <input type="number" id="formStock" class="form-control" placeholder="5" min="0" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stock Mínimo de Alerta *</label>
+            <input type="number" id="formMinStock" class="form-control" placeholder="2" min="1" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Foto del Material (Sube desde tu galería o cámara)</label>
+          <input type="file" id="formImageFile" class="form-control" accept="image/*">
+          <input type="hidden" id="formImageData">
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn btn-outline" id="btnCancelForm">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Guardar Material</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toastNotification"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Acción completada</span></div>
+
+  <script>
+    // Inventario precargado con tus datos reales
+    const defaultData = [
+      {
+        id: '1',
+        name: 'Hilo Algodón Rojo Carmín',
+        category: 'hilos',
+        colorName: 'Rojo Carmín (Tata)',
+        colorHex: '#d90429',
+        cost: 8.00,
+        stock: 3,
+        minStock: 2,
+        image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: '2',
+        name: 'Hilo Algodón Azul Rey',
+        category: 'hilos',
+        colorName: 'Azul Eléctrico',
+        colorHex: '#1d3557',
+        cost: 8.00,
+        stock: 1,
+        minStock: 2,
+        image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: '3',
+        name: 'Hilo Algodón Amarillo Mostaza',
+        category: 'hilos',
+        colorName: 'Amarillo Boca',
+        colorHex: '#ffb703',
+        cost: 8.00,
+        stock: 0,
+        minStock: 1,
+        image: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: '4',
+        name: 'Argollas de Llavero con Cadena',
+        category: 'accesorios',
+        colorName: 'Plateado reforzado',
+        colorHex: '#adb5bd',
+        cost: 1.50,
+        stock: 12,
+        minStock: 5,
+        image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: '5',
+        name: 'Pack Bolsita Organza + Bolsa Kraft',
+        category: 'empaques',
+        colorName: 'Kraft Natural',
+        colorHex: '#b8864e',
+        cost: 3.00,
+        stock: 4,
+        minStock: 5,
+        image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: '6',
+        name: 'Relleno Siliconado / Napa (Kilos)',
+        category: 'otros',
+        colorName: 'Blanco Nieve',
+        colorHex: '#ffffff',
+        cost: 21.00,
+        stock: 2,
+        minStock: 1,
+        image: ''
+      }
+    ];
+
+    let materials = JSON.parse(localStorage.getItem('rana_enredada_stock')) || defaultData;
+    let activeFilter = 'all';
+    let searchQuery = '';
+
+    // Guardar en Storage
+    function saveStorage() {
+      localStorage.setItem('rana_enredada_stock', JSON.stringify(materials));
+      updateMetrics();
+      renderInventory();
+      renderShoppingList();
+    }
+
+    // Notificación
+    function showToast(text) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMsg').innerText = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    // Render Métricas
+    function updateMetrics() {
+      const totalTypes = materials.length;
+      const lowCount = materials.filter(i => i.stock > 0 && i.stock <= i.minStock).length;
+      const outCount = materials.filter(i => i.stock === 0).length;
+      const totalVal = materials.reduce((acc, curr) => acc + (curr.cost * curr.stock), 0);
+
+      document.getElementById('metricTotalItems').innerText = totalTypes;
+      document.getElementById('metricLowStock').innerText = lowCount;
+      document.getElementById('metricOutStock').innerText = outCount;
+      document.getElementById('metricTotalValue').innerText = `S/ ${totalVal.toFixed(2)}`;
+    }
+
+    // Render Inventario
+    function renderInventory() {
+      const grid = document.getElementById('inventoryGrid');
+      grid.innerHTML = '';
+
+      const filtered = materials.filter(item => {
+        const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              (item.colorName && item.colorName.toLowerCase().includes(searchQuery.toLowerCase()));
+        if (!matchesSearch) return false;
+
+        if (activeFilter === 'all') return true;
+        if (activeFilter === 'alertas') return item.stock <= item.minStock;
+        return item.category === activeFilter;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>No se encontraron materiales</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem;">Prueba con otra búsqueda o agrega un nuevo material con el botón superior.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        let badgeClass = 'badge-ok';
+        let badgeText = 'En Stock';
+        if (item.stock === 0) {
+          badgeClass = 'badge-out';
+          badgeText = 'Agotado';
+        } else if (item.stock <= item.minStock) {
+          badgeClass = 'badge-low';
+          badgeText = 'Por Agotarse';
+        }
+
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <div class="card-img-wrap">
+            ${item.image ? `<img src="${item.image}" alt="${item.name}" class="card-img">` : `<i class="fa-solid fa-yarn card-img-placeholder"></i>`}
+            <span class="card-badge ${badgeClass}">${badgeText}</span>
+            ${item.colorHex ? `
+              <div class="color-swatch-tag">
+                <span class="color-circle" style="background-color:${item.colorHex}"></span>
+                <span>${item.colorName || 'Tono'}</span>
+              </div>
+            ` : ''}
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">${item.name}</h4>
+            <div class="card-subtitle">${item.colorName || 'General'}</div>
+            
+            <div class="card-meta">
+              <div class="card-meta-item">
+                <span>Costo Unitario</span>
+                <strong>S/ ${parseFloat(item.cost).toFixed(2)}</strong>
+              </div>
+              <div class="card-meta-item">
+                <span>Mínimo Alerta</span>
+                <strong>${item.minStock} un.</strong>
+              </div>
+            </div>
+
+            <div class="stock-controls">
+              <div class="counter-group">
+                <button class="btn-count" onclick="modifyStock('${item.id}', -1)"><i class="fa-solid fa-minus"></i></button>
+                <span class="count-display">${item.stock}</span>
+                <button class="btn-count" onclick="modifyStock('${item.id}', 1)"><i class="fa-solid fa-plus"></i></button>
+              </div>
+              <div class="card-actions">
+                <button class="btn-icon-action" onclick="editItem('${item.id}')" title="Editar"><i class="fa-regular fa-pen-to-square"></i></button>
+                <button class="btn-icon-action" onclick="deleteItem('${item.id}')" title="Eliminar" style="color:var(--status-out);"><i class="fa-regular fa-trash-can"></i></button>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Modificar Stock con botones + y -
+    window.modifyStock = function(id, delta) {
+      const item = materials.find(i => i.id === id);
+      if (item) {
+        item.stock = Math.max(0, item.stock + delta);
+        saveStorage();
+      }
+    };
+
+    // Render Lista de Compras
+    function renderShoppingList() {
+      const container = document.getElementById('shoppingListContainer');
+      const needRestock = materials.filter(i => i.stock <= i.minStock);
+
+      if (needRestock.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:2rem; color:var(--status-ok);">
+            <i class="fa-solid fa-circle-check" style="font-size:2.5rem; margin-bottom:8px;"></i>
+            <h4>¡Todo tu almacén está bien surtido!</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem;">No tienes ningún material bajo el stock mínimo en este momento.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let totalEstimate = 0;
+      let html = '';
+
+      needRestock.forEach(item => {
+        const qtyNeeded = Math.max(1, (item.minStock * 2) - item.stock);
+        const subtotal = qtyNeeded * item.cost;
+        totalEstimate += subtotal;
+
+        html += `
+          <div class="shop-item-row">
+            <div>
+              <strong style="color:var(--text); font-size:0.95rem;">${item.name}</strong>
+              <div style="font-size:0.8rem; color:var(--text-muted);">
+                Color: ${item.colorName || 'N/A'} | Stock actual: <span style="color:${item.stock === 0 ? 'var(--status-out)' : 'var(--status-low)'}; font-weight:700;">${item.stock} un.</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--primary); display:block;">Pedir: ${qtyNeeded} un.</span>
+              <span style="font-size:0.85rem; color:var(--text-muted);">Aprox: S/ ${subtotal.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+        <div style="margin-top:16px; padding:12px; background:var(--bg-cream); border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+          <strong>Presupuesto Estimado de Reposición:</strong>
+          <span style="font-size:1.15rem; font-weight:800; color:var(--primary);">S/ ${totalEstimate.toFixed(2)}</span>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // Copiar Lista de Compras al portapapeles para WhatsApp
+    document.getElementById('btnCopyShoppingList').addEventListener('click', () => {
+      const needRestock = materials.filter(i => i.stock <= i.minStock);
+      if (needRestock.length === 0) {
+        showToast('No hay materiales por reponer');
+        return;
+      }
+
+      let msg = "🧶 *LISTA DE COMPRAS - UNA RANA ENREDADA* 🐸\n";
+      needRestock.forEach(i => {
+        const qty = Math.max(1, (i.minStock * 2) - i.stock);
+        msg += `• ${i.name} (${i.colorName || 'estándar'}) -> Pedir: ${qty} un. (Stock actual: ${i.stock})\n`;
+      });
+
+      navigator.clipboard.writeText(msg).then(() => {
+        showToast('¡Lista copiada para pegar en WhatsApp!');
+      });
+    });
+
+    // Calculadora de Costos
+    function calculateCrochetPrice() {
+      const yarnG = parseFloat(document.getElementById('calcYarnGrams').value) || 0;
+      const stuffG = parseFloat(document.getElementById('calcStuffingGrams').value) || 0;
+      const keychain = parseFloat(document.getElementById('calcKeychainCost').value) || 0;
+      const eyes = parseFloat(document.getElementById('calcEyesCost').value) || 0;
+      const packaging = parseFloat(document.getElementById('calcPackagingCost').value) || 0;
+      const hours = parseFloat(document.getElementById('calcHours').value) || 0;
+      const hourlyRate = parseFloat(document.getElementById('calcHourlyRate').value) || 0;
+
+      const yarnCost = (yarnG / 100) * 8.00;
+      const stuffCost = (stuffG / 1000) * 21.00;
+      const totalMaterials = yarnCost + stuffCost + keychain + eyes + packaging;
+      const laborCost = hours * hourlyRate;
+      const margin = (totalMaterials + laborCost) * 0.20; // 20% ganancia marca/imprevistos
+      const suggested = totalMaterials + laborCost + margin;
+
+      document.getElementById('calcSuggestedPrice').innerText = `S/ ${Math.round(suggested)}.00`;
+      document.getElementById('calcCostBreakdown').innerText = `Materiales: S/ ${totalMaterials.toFixed(2)} | Mano de Obra: S/ ${laborCost.toFixed(2)} | Margen: S/ ${margin.toFixed(2)}`;
+    }
+
+    ['calcYarnGrams', 'calcStuffingGrams', 'calcKeychainCost', 'calcEyesCost', 'calcPackagingCost', 'calcHours', 'calcHourlyRate'].forEach(id => {
+      document.getElementById(id).addEventListener('input', calculateCrochetPrice);
+    });
+
+    // Pestañas
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).style.display = 'block';
+      });
+    });
+
+    // Filtros
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilter = chip.dataset.filter;
+        renderInventory();
+      });
+    });
+
+    // Búsqueda
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderInventory();
+    });
+
+    // Manejo de Modal
+    const modal = document.getElementById('itemModal');
+    const form = document.getElementById('materialForm');
+
+    document.getElementById('btnOpenModalAdd').addEventListener('click', () => {
+      form.reset();
+      document.getElementById('formItemId').value = '';
+      document.getElementById('formImageData').value = '';
+      document.getElementById('modalTitle').innerText = 'Agregar Nuevo Material';
+      modal.classList.add('open');
+    });
+
+    document.getElementById('btnCloseModal').addEventListener('click', () => modal.classList.remove('open'));
+    document.getElementById('btnCancelForm').addEventListener('click', () => modal.classList.remove('open'));
+
+    // Convertir imagen subida a Base64
+    document.getElementById('formImageFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('formImageData').value = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Guardar / Editar
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('formItemId').value || Date.now().toString();
+      const existing = materials.find(i => i.id === id);
+
+      const newItem = {
+        id,
+        name: document.getElementById('formName').value,
+        category: document.getElementById('formCategory').value,
+        colorName: document.getElementById('formColorName').value,
+        colorHex: document.getElementById('formColorHex').value,
+        cost: parseFloat(document.getElementById('formCost').value),
+        stock: parseInt(document.getElementById('formStock').value),
+        minStock: parseInt(document.getElementById('formMinStock').value),
+        image: document.getElementById('formImageData').value || (existing ? existing.image : '')
+      };
+
+      if (existing) {
+        const idx = materials.findIndex(i => i.id === id);
+        materials[idx] = newItem;
+        showToast('Material actualizado');
+      } else {
+        materials.unshift(newItem);
+        showToast('Nuevo material guardado');
+      }
+
+      saveStorage();
+      modal.classList.remove('open');
+    });
+
+    // Editar
+    window.editItem = function(id) {
+      const item = materials.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('formItemId').value = item.id;
+      document.getElementById('formName').value = item.name;
+      document.getElementById('formCategory').value = item.category;
+      document.getElementById('formColorName').value = item.colorName || '';
+      document.getElementById('formColorHex').value = item.colorHex || '#d90429';
+      document.getElementById('formCost').value = item.cost;
+      document.getElementById('formStock').value = item.stock;
+      document.getElementById('formMinStock').value = item.minStock;
+      document.getElementById('formImageData').value = item.image || '';
+
+      document.getElementById('modalTitle').innerText = 'Editar Material';
+      modal.classList.add('open');
+    };
+
+    // Eliminar
+    window.deleteItem = function(id) {
+      if (confirm('¿Deseas eliminar este material del almacén?')) {
+        materials = materials.filter(i => i.id !== id);
+        saveStorage();
+        showToast('Material eliminado');
+      }
+    };
+
+    // Exportar Respaldo
+    document.getElementById('btnExport').addEventListener('click', () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(materials, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", `inventario_rana_enredada_${new Date().toISOString().slice(0,10)}.json`);
+      dlAnchor.click();
+      showToast('Copia descargada');
+    });
+
+    // Iniciar
+    updateMetrics();
+    renderInventory();
+    renderShoppingList();
+    calculateCrochetPrice();
+  </script>
+</body>
+</html>
